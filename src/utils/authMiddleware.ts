@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 require('dotenv').config();
 
+
 const secret = process.env.JWT_SECRET?.toString() || 'your_default_secret';
 
 export class AuthMiddleware {
@@ -17,7 +18,8 @@ export class AuthMiddleware {
 
     try {
       if(token===secret){
-        console.log('Autorizado');
+        const clientIp =  req.socket.remoteAddress;
+        console.log('Ip:' + clientIp);
         next();
       }else{
       return res.status(403).json({ message: 'Prohibido' });

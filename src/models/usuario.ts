@@ -1,6 +1,6 @@
 export interface usuario {
     id: number;
-    password: string;
+    pass: string;
     nombre: string;
     apellidoPaterno: string;
     apellidoMaterno?: string;
