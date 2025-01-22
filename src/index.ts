@@ -14,5 +14,8 @@ app.use('/swagger', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/api', router); //router que contiene todas las rutas
 
 app.listen(port, () => {
+  console.log('Versión: 22/01/2025');
   console.log(`Servidor escuchando en el puerto ${port}`);
 });
+
+// recomiendo correrlo en local usando npm run dev
