@@ -1,0 +1,22 @@
+CREATE TABLE Usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_usuario VARCHAR(255) NOT NULL,
+    apellido_usuario VARCHAR(255) NOT NULL,
+    email_usuario VARCHAR(255) UNIQUE NOT NULL,
+    telefono_usuario VARCHAR(20) NOT NULL,
+    contrasena_usuario VARCHAR(255) NOT NULL,
+    fecha_nacimiento_usuario DATE,
+    genero_usuario VARCHAR(1),
+    direccion_usuario VARCHAR(255),
+    ciudad_usuario VARCHAR(100),
+    estado_usuario VARCHAR(100),
+    codigo_postal_usuario VARCHAR(20),
+    fk_tabla_rol INT,
+    fecha_registro_usuario TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fk_tabla_estatus INT,
+    fk_tabla_catalogo_negocios INT,
+    codigo_autenticacion_usuario VARCHAR(4),
+    FOREIGN KEY (fk_tabla_rol) REFERENCES Rol(id_rol),
+    FOREIGN KEY (fk_tabla_estatus) REFERENCES Estatus(id_estatus),
+    FOREIGN KEY (fk_tabla_catalogo_negocios) REFERENCES Catalogo_negocios(id_negocio)
+);
