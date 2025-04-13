@@ -1,21 +1,33 @@
 import express from 'express';
 const swaggerUI = require('swagger-ui-express');
 const swaggerDocument = require('./swagger');
-import router from './routes'; //Todas las rutas de controladores concentrados en un archivo
+import router from './routes';
 
 const app = express();
-const port = process.env.PORT || 3000; // Usar puerto de entorno o 3000 por defecto
-app.use(express.json());
+const port = process.env.PORT || 3000;
 
-// Integrar Swagger
-app.use('/swagger', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+// Middlewares esenciales (en orden correcto)
+app.use(express.json()); // Para parsear application/json
+app.use(express.urlencoded({ extended: true })); // Para parsear application/x-www-form-urlencoded
 
-
-app.use('/api', router); //router que contiene todas las rutas
-
-app.listen(port, () => {
-  console.log('Versión: 22/01/2025');
-  console.log(`Servidor escuchando en el puerto ${port}`);
+// Debug middleware (añadido para ver las peticiones)
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  // Ejemplo de uso de res:
+  res.set('X-Request-Time', new Date().toISOString());
+  next();
 });
 
-// recomiendo correrlo en local usando npm run dev
+// Swagger
+app.use('/swagger', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+
+// Rutas
+app.use('/api', router);
+
+app.listen(port, () => {
+  console.log('Versión: ' + new Date().toISOString());
+  console.log(`Servidor escuchando en el puerto ${port}`);
+  console.log('Documentación disponible en /swagger');
+});

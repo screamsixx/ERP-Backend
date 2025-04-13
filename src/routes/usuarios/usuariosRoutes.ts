@@ -7,8 +7,7 @@ const usuariosControllerInstance = new usuariosController();
 const authMiddlewareInstance = new AuthMiddleware(); // Crear una instancia del middleware
 
 //lista de metodos disponibles por controlador
-usuariosRouter.post('/login', authMiddlewareInstance.verifyToken,usuariosControllerInstance.insertarUsarios);
-usuariosRouter.get('/', authMiddlewareInstance.verifyToken,usuariosControllerInstance.obtenerTodosLosUsuarios);
-usuariosRouter.post('/', authMiddlewareInstance.verifyToken,usuariosControllerInstance.insertarUsarios);
-usuariosRouter.delete('/:id', authMiddlewareInstance.verifyToken,usuariosControllerInstance.eliminarUsariosID);
+usuariosRouter.post('/login',usuariosControllerInstance.loginUsuario);//ruta sin protección
+usuariosRouter.get('/hello', authMiddlewareInstance.verifyToken,usuariosControllerInstance.hello); //ruta protegida
+
 export default usuariosRouter;

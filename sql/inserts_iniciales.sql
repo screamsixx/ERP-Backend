@@ -26,7 +26,7 @@ INSERT INTO Usuario (
     fk_tabla_rol,
     fk_tabla_estatus,
     fk_tabla_catalogo_negocios,
-    codigo_autenticacion_usuario
+    codigo_autenticacion_usuario, usuario
 ) VALUES (
     'Admin',
     'Principal',
@@ -42,5 +42,6 @@ INSERT INTO Usuario (
     1,  -- ID del rol Admin
     1,  -- ID del estatus Activo
     1,  -- ID del negocio
-    '1234' -- Código de autenticación (si se usa)
+    '1234' -- Código de autenticación (si se usa),
+    'admin'
 );

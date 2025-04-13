@@ -1,27 +1,19 @@
 DELIMITER $$
 
-CREATE FUNCTION login(
-  p_email VARCHAR(100),
-  p_password VARCHAR(50)
-)
+CREATE DEFINER=`root`@`localhost` FUNCTION `login`(
+  p_usuario VARCHAR(100),
+  p_contrasena_usuario VARCHAR(255)
 RETURNS INT
-DETERMINISTIC 
+DETERMINISTIC
 BEGIN
-  DECLARE user_id INT;
-
-  SELECT 
-    id 
-  INTO user_id
+  DECLARE user_id INT DEFAULT -1;  -- Cambiado a -1 para mejor manejo de errores
+  
+  SELECT id_usuario INTO user_id
   FROM usuario
-  WHERE email = p_email AND pass = p_password;
-
-  IF user_id IS NOT NULL THEN
-    -- Si el usuario existe, devuelve su ID
-    RETURN user_id;
-  ELSE
-    -- Si el usuario no existe, devuelve 0
-    RETURN 0;
-  END IF;
-END $$
+  WHERE usuario = p_usuario AND contrasena_usuario = p_contrasena_usuario
+  LIMIT 1;
+  
+  RETURN user_id;  -- Ya es INT, no necesita CAST
+END$$
 
 DELIMITER ;
