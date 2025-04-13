@@ -1,31 +1,60 @@
-import { catchError, from, map, Observable, throwError } from 'rxjs';
-import { usuario } from '../models/usuario';
+import { catchError, from, map, mergeMap, Observable } from 'rxjs';
 import mysqlConnection from '../utils/mysqlConnection';
-import { RowDataPacket } from 'mysql2';
+import { AuthMiddleware } from '../utils/authMiddleware';
 
 export class usuariosService {
+  static loginUsuario(user: string, pass: string): Observable<{ id: number, user: string, token: string }> {
+    const query = `SELECT login(?, ?) AS id`;
+    const auth = new AuthMiddleware();
 
-  static obtenerTodosLosUsuarios(): Observable<usuario[]> {
-    return from(mysqlConnection.query('SELECT * FROM ejemplo.usuario'))
-      .pipe(
-        map((result) => {
-          const rows = result[0] as RowDataPacket[];
-          return rows.map((row) => ({
-            id: row.id,
-            pass: row.pass,
-            nombre: row.nombre,
-            apellidoPaterno: row.apellidoPaterno,
-            apellidoMaterno: row.apellidoMaterno,
-            email: row.email,
-            fechaNacimiento: row.fechaNacimiento, // Asegúrate de que 'fechaNacimiento' sea 'fechaNacimiento' en la base de datos
-            esAdmin: !!row.esAdmin, // Convertir a booleano si es necesario
-          }));
-        }),
-        catchError((error) => {
-          console.error('Error al obtener usuarios:', error);
-          return throwError(() => error); // Propagar el error
-        })
-      );
+    return from(mysqlConnection.execute(query, [user, pass])).pipe(
+      map((result: any) => {
+        const [rows] = result;
+        
+        if (!Array.isArray(rows) || rows.length === 0) {
+          throw {
+            error: true,
+            status: 401,
+            body: 'Credenciales inválidas'
+          };
+        }
+
+        const id = rows[0]?.id;
+        
+        if (typeof id !== 'number') {
+          throw {
+            error: true,
+            status: 500,
+            body: 'Error en la respuesta del servidor'
+          };
+        }
+        
+        return id;
+      }),
+      mergeMap((id: number) => {
+        if (id > 0) {
+          return auth.createToken(user).pipe(
+            map((token: string) => ({
+              id,
+              user,
+              token: `Bearer ${token}` // Concatenación correcta del Bearer
+            }))
+          );
+        }
+        throw {
+          error: true,
+          status: 401,
+          body: 'Credenciales inválidas'
+        };
+      }),
+      catchError((error) => {
+        console.error('Error en login:', error);
+        throw {
+          error: true,
+          status: error.status || 500,
+          body: error.body || error.message || 'Error en autenticación'
+        };
+      })
+    );
   }
-
 }

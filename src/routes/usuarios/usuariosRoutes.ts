@@ -7,6 +7,7 @@ const usuariosControllerInstance = new usuariosController();
 const authMiddlewareInstance = new AuthMiddleware(); // Crear una instancia del middleware
 
 //lista de metodos disponibles por controlador
-usuariosRouter.get('/', authMiddlewareInstance.verifyToken,usuariosControllerInstance.obtenerTodosLosUsuarios);
+usuariosRouter.post('/login',usuariosControllerInstance.loginUsuario);//ruta sin protección
+usuariosRouter.get('/hello', authMiddlewareInstance.verifyToken,usuariosControllerInstance.hello); //ruta protegida
 
 export default usuariosRouter;
